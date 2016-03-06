@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		60C6D0041C8BD5DF001FEC11 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60C6D0031C8BD5DF001FEC11 /* main.cpp */; };
+		60C6D00E1C8BE4EC001FEC11 /* DiskMultiMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60C6D00D1C8BE4EC001FEC11 /* DiskMultiMap.cpp */; };
+		60C6D0101C8BE505001FEC11 /* MultiMapTuple.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60C6D00F1C8BE505001FEC11 /* MultiMapTuple.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +27,11 @@
 /* Begin PBXFileReference section */
 		60C6D0001C8BD5DF001FEC11 /* Project 4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Project 4"; sourceTree = BUILT_PRODUCTS_DIR; };
 		60C6D0031C8BD5DF001FEC11 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
+		60C6D00A1C8BE39B001FEC11 /* DiskMultiMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DiskMultiMap.h; sourceTree = "<group>"; };
+		60C6D00B1C8BE39B001FEC11 /* MultiMapTuple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiMapTuple.h; sourceTree = "<group>"; };
+		60C6D00C1C8BE3D5001FEC11 /* BinaryFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BinaryFile.h; sourceTree = "<group>"; };
+		60C6D00D1C8BE4EC001FEC11 /* DiskMultiMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiskMultiMap.cpp; sourceTree = "<group>"; };
+		60C6D00F1C8BE505001FEC11 /* MultiMapTuple.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MultiMapTuple.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +65,11 @@
 			isa = PBXGroup;
 			children = (
 				60C6D0031C8BD5DF001FEC11 /* main.cpp */,
+				60C6D00A1C8BE39B001FEC11 /* DiskMultiMap.h */,
+				60C6D00B1C8BE39B001FEC11 /* MultiMapTuple.h */,
+				60C6D00D1C8BE4EC001FEC11 /* DiskMultiMap.cpp */,
+				60C6D00F1C8BE505001FEC11 /* MultiMapTuple.cpp */,
+				60C6D00C1C8BE3D5001FEC11 /* BinaryFile.h */,
 			);
 			path = "Project 4";
 			sourceTree = "<group>";
@@ -119,6 +131,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				60C6D0041C8BD5DF001FEC11 /* main.cpp in Sources */,
+				60C6D00E1C8BE4EC001FEC11 /* DiskMultiMap.cpp in Sources */,
+				60C6D0101C8BE505001FEC11 /* MultiMapTuple.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
