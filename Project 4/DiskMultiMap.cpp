@@ -35,11 +35,12 @@ bool DiskMultiMap::createNew(const std::string &filename, unsigned int numBucket
     fileCreated = true;
     
     m_numBuckets = numBuckets;
-    
+    empties = 0;
     bf.write(numBuckets, 0);
+    bf.write(empties, sizeof(int));
     
     for (int i = 0; i < numBuckets; i++) {
-        bf.write(i, sizeof(int) * (i + 1));
+        bf.write(i, sizeof(int) * (i + 2));
     }
     
     
@@ -74,7 +75,7 @@ bool DiskMultiMap::insert(const std::string &key, const std::string &value, cons
     strcpy(c, context.c_str());
     
     
-    int plh = (m_hash(key) + 1) * 4;
+    int plh = (m_hash(key) + 2) * 4;
     int posCurKey;
     bf.read(posCurKey, plh);
     int posKey = bf.fileLength();//======================================modify
@@ -151,7 +152,7 @@ bool DiskMultiMap::insert(const std::string &key, const std::string &value, cons
 }
 
 DiskMultiMap::Iterator DiskMultiMap::search(const std::string &key){
-    int plh = (m_hash(key) + 1) * 4;
+    int plh = (m_hash(key) + 2) * 4;
     int posCurKey;
     bf.read(posCurKey, plh);
     if (posCurKey < m_numBuckets) {
@@ -185,6 +186,53 @@ DiskMultiMap::Iterator DiskMultiMap::search(const std::string &key){
     return it;
 }
 
+int DiskMultiMap::erase(const std::string &key, const std::string &value, const std::string &context){
+    Iterator it = search(key);
+    if (!it.isValid()) {
+        return 0;
+    }
+    MultiMapTuple m;
+    int count;
+    do{
+        m = *(++it);
+        if (m.value == value && m.context == context)
+            count++;
+    } while (it.isValid());
+    
+    int plh = (m_hash(key) + 2) * 4;
+    int posCurKey;
+    bf.read(posCurKey, plh);
+    
+    char k[key.size() + 1];
+    strcpy(k, key.c_str());
+    int size;
+    bf.read(size, posCurKey + sizeof(int)*2); // read size of key at posCurKey
+    char ky[size + 1];
+    int nextKey;
+    bf.read(nextKey, posCurKey); // read the offset value of the next key.
+    bf.read(ky, size, posCurKey + 3*sizeof(int)); // read key at posCurKey
+    
+    //loop through all the keys to find the input key in case multiple keys have the same hash value.
+    while (strcmp(ky, k) != 0 && nextKey != 0) { // while the keys dont match and there are more keys.
+        posCurKey = nextKey;
+        bf.read(nextKey, posCurKey);
+        bf.read(ky, size, posCurKey + 3*sizeof(int));
+    }
+    int node;
+    bf.read(node, posCurKey + sizeof(int)); // node has first value context pair for that key.
+    int next;
+    do{
+        bf.read(next, node);
+        
+        if (<#condition#>) {
+            <#statements#>
+        }
+    }while (next != 0);
+    
+    
+    return count;
+}
+
 //Private Disk Multi Map Methods
 /*--------------------------------------------------------------------------------------*/
 
@@ -195,7 +243,7 @@ void DiskMultiMap::print(){
     
     int buck;
     for (int i = 0; i < m_numBuckets; i++) {
-        bf.read(buck, sizeof(int) * (i + 1));
+        bf.read(buck, sizeof(int) * (i + 2));
         if (buck > nb) {
             printKeys(buck);
         }
@@ -297,4 +345,10 @@ DiskMultiMap::Iterator& DiskMultiMap::Iterator::operator++(){
 
 bool DiskMultiMap::Iterator::isValid() const{
     return valid;
+}
+
+void DiskMultiMap::Iterator::remove(int &nodeOff, int &next){
+    nodeOff = nodeOffset;
+    BinaryFile* bf = &(dmm->bf);
+    bf->read(next, nodeOffset);
 }

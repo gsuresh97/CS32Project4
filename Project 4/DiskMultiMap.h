@@ -24,6 +24,7 @@ public:
         int nodeOffset;
         string key;
         bool valid;
+        void remove(int& nodeOff, int& next);
 	};
 
 	DiskMultiMap();
@@ -41,6 +42,7 @@ private:
     BinaryFile bf;
     bool fileCreated;
     int m_numBuckets;
+    int empties;
     int m_hash(const string& str);
     void printList(int offset);
     void printKeys(int offset);
