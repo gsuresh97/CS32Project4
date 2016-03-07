@@ -7,9 +7,21 @@
 //
 
 #include <iostream>
+#include "DiskMultiMap.h"
+#include <functional>
+
+using namespace std;
+
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+    //hash<string> hs;
+    //cout << hs("bulks") % 10 << endl;
+    
+    DiskMultiMap d;
+    d.createNew("f.txt" , 10);
+    d.insert("Hello", "World", "Ethel");
+    d.insert("Hello", "King", "queen");
+    d.insert("bulks", "Snowball", "mammoth");
+    d.insert("sulks", "Many", "Flowers");
+    d.print();
 }
