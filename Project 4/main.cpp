@@ -13,20 +13,22 @@
 using namespace std;
 
 
-int main(int argc, const char * argv[]) {
-    //hash<string> hs;
-    //cout << hs("bulks") % 10 << endl;
+int main() {
+    DiskMultiMap x;
+    x.createNew("myhashtable.dat",100); // empty, with 100 buckets
+    x.insert("hmm.exe", "pfft.exe", "m52902");
+    x.insert("hmm.exe", "pfft.exe", "m52902");
+    x.insert("hmm.exe", "pfft.exe", "m10001");
+    x.insert("blah.exe", "bletch.exe", "m0003");
     
-    DiskMultiMap d;
-    d.createNew("f.txt" , 10);
-    d.insert("Hello", "World", "Ethel");
-    d.insert("Hello", "King", "queenkjsbdfsbggdfgdfgdsfgslknfkdjsnfkjbgkldfbslingsgfdfgdsgdhgh");
-    d.insert("Hello", "King", "queenkjsbdfsbggdfgdfgdsfgslknfkdjsnfkjbgkldfbslingsgfdfgdsgdhgh");
-    //d.print();
-    d.erase("Hello", "King", "queenkjsbdfsbggdfgdfgdsfgslknfkdjsnfkjbgkldfbslingsgfdfgdsgdhgh");
-    //d.print();
-    d.insert("bulks", "Snow", "mammoth");
-    d.insert("Hello", "King", "queenling");
-    d.insert("sulks", "Many", "Flowers");
-    d.print();
+    x.print();
+    
+    // line 1
+    if (x.erase("hmm.exe", "pfft.exe", "m52902") == 2) cout << "Just erased 2 items from the table!\n";
+    // line 2
+    if (x.erase("hmm.exe", "pfft.exe", "m10001") > 0)
+        cout << "Just erased at least 1 item from the table!\n";
+    // line 3
+    if (x.erase("blah.exe", "bletch.exe", "m66666") == 0)
+        cout << "I didn't erase this item cause it wasn't there\n";
 }

@@ -199,9 +199,10 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
     int count = 0;
     do{
         
-        m = *(++it);
+        m = *it;
         if (m.value == value && m.context == context)
             count++;
+        ++it;
     } while (it.isValid());
     
     int plh = (m_hash(key) + 2) * 4;
@@ -362,10 +363,10 @@ void DiskMultiMap::printList(int offset){
         bf.read(s2, nn + 2* sizeof(int) + s1);
         char c[s1];
         bf.read(c, s2, nn + 3*sizeof(int) + s1);
-        cout << "Context Offset: " << nn + 3*sizeof(int) + s1 << "\tSize: " << s2 << "\t" << c <<"\t";/*<< endl << endl;*/
-        for (int i = 0; i < s2; i++) {
+        cout << "Context Offset: " << nn + 3*sizeof(int) + s1 << "\tSize: " << s2 << "\t" << c <<"\t" << endl << endl;
+        /*for (int i = 0; i < s2; i++) {
             cout << (int)c[i] << " ";
-        }
+        }*/
         cout << endl << endl;
         //cout << "\t" << count << ": Value is " << v << "\t Context is " << c <<endl;
         bf.read(nn, nn);
