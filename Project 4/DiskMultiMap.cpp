@@ -78,9 +78,10 @@ bool DiskMultiMap::insert(const std::string &key, const std::string &value, cons
     int plh = (m_hash(key) + 2) * 4;
     int posCurKey;
     bf.read(posCurKey, plh);
-    int posKey = bf.fileLength();//======================================modify
+    int sizePosKeyNode = (int)(key.size() + 1 + 3*sizeof(int));
+    int posKey = getNewPos(sizePosKeyNode);//======================================modify
     if (posCurKey < m_numBuckets){
-        int kSize = strlen(k) + 1;
+        int kSize = (int)(strlen(k) + 1);
         bf.write(posKey, plh);
         bf.write(0, posKey); // next key
         bf.write(0, posKey + sizeof(int)); // next node
@@ -106,7 +107,7 @@ bool DiskMultiMap::insert(const std::string &key, const std::string &value, cons
         if (strcmp(ky, k) != 0 && nextKey == 0) { //there is no key.
             bf.write(posKey, posCurKey); // add a new key to the list of keys. (replace the 0 with the offset of new key.)
             posCurKey = posKey;
-            int kSize = strlen(k) + 1;
+            int kSize = (int)(strlen(k) + 1);
             bf.write(0, posCurKey); // there is no key after this.
             bf.write(0, posCurKey + sizeof(int)); // the key has no node.
             bf.write(kSize, posCurKey + 2*sizeof(int)); // size of key
@@ -123,7 +124,8 @@ bool DiskMultiMap::insert(const std::string &key, const std::string &value, cons
 
     //posCurKey holds the offset value for the key.
     int curNode;
-    int posNode = bf.fileLength(); //===================================================modify
+    int posNodeSize = (int)(value.size() + 1 + context.size() + 1 + 3*sizeof(int));
+    int posNode = getNewPos(posNodeSize); //===================================================modify
     bf.read(curNode, posCurKey + sizeof(int));
 
     if (curNode == 0) { // This key has no nodes
@@ -139,16 +141,18 @@ bool DiskMultiMap::insert(const std::string &key, const std::string &value, cons
         bf.write(posNode, curNode);
     }
 
-    int vSize = strlen(v) + 1;
-    int cSize = strlen(c) + 1;
+    int vSize = (int)(strlen(v) + 1);
+    int cSize = (int)(strlen(c) + 1);
     bf.write(0, posNode); // write 0 since there are no nodes after this.
     bf.write(vSize, posNode + sizeof(int)); //write the size of the value
+    //cout << "Value Offset: " << posNode + 2*sizeof(int) << "\t" << v << endl;
     bf.write(v, vSize, posNode + 2*sizeof(int)); // write the value
-    bf.write(strlen(c), posNode + 2*sizeof(int) + vSize); // write the size of the context
+    //cout << c << endl;
+    bf.write(cSize, posNode + 2*sizeof(int) + vSize); // write the size of the context
     bf.write(c, cSize, posNode + 3*sizeof(int) + vSize);
-    
+    //cout << "Context Offset: " << posNode + 3*sizeof(int) + vSize << "\t" << c << endl;
+    //cout << endl;
     return true;
-    
 }
 
 DiskMultiMap::Iterator DiskMultiMap::search(const std::string &key){
@@ -192,8 +196,9 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
         return 0;
     }
     MultiMapTuple m;
-    int count;
+    int count = 0;
     do{
+        
         m = *(++it);
         if (m.value == value && m.context == context)
             count++;
@@ -204,7 +209,11 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
     bf.read(posCurKey, plh);
     
     char k[key.size() + 1];
+    char v[value.size() + 1];
+    char c[context.size() + 1];
     strcpy(k, key.c_str());
+    strcpy(v, value.c_str());
+    strcpy(c, context.c_str());
     int size;
     bf.read(size, posCurKey + sizeof(int)*2); // read size of key at posCurKey
     char ky[size + 1];
@@ -218,16 +227,32 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
         bf.read(nextKey, posCurKey);
         bf.read(ky, size, posCurKey + 3*sizeof(int));
     }
+    int prev = posCurKey + sizeof(int);
     int node;
-    bf.read(node, posCurKey + sizeof(int)); // node has first value context pair for that key.
-    int next;
-    do{
-        bf.read(next, node);
-        
-        if (<#condition#>) {
-            <#statements#>
+    bf.read(node, posCurKey + sizeof(int)); // node has the offset of the first value context pair for that key.
+    //bf.read(next, node);
+    while (node != 0){
+        int s1;
+        bf.read(s1, node + sizeof(int));
+        char v1[s1];
+        bf.read(v1, s1, node + 2*sizeof(int));
+        int s2;
+        bf.read(s2, node + 2* sizeof(int) + s1);
+        char c1[s2];
+        bf.read(c1, s2, node + 3*sizeof(int) + s1);
+        bool rmv = false;
+        int x;
+        if (strcmp(v, v1) == 0 && strcmp(c, c1) == 0) {
+            x = remove(node, prev); // next is the node that you want to remove, node is the node before that.
+            rmv = true;
         }
-    }while (next != 0);
+        if (rmv) {
+            node = x;
+        } else{
+            prev = node;
+            bf.read(node, prev);
+        }
+    }
     
     
     return count;
@@ -235,6 +260,80 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
 
 //Private Disk Multi Map Methods
 /*--------------------------------------------------------------------------------------*/
+int DiskMultiMap::getNewPos(int size){
+    int nextFree;
+    bf.read(nextFree, sizeof(int));
+    if (nextFree == 0) { // if there are no deleted node return the file length
+        return bf.fileLength();
+    }
+    int delSize = 0;
+    int prev = sizeof(int);
+    int free = nextFree;
+    bf.read(nextFree, free); //nextFree is the next deleted node that can be filled.
+    
+    int chosenNode = -1;
+    
+    while (free != 0 && delSize < size) { // loop through the deleted nodes until one with the correct size is found.
+        bf.read(delSize, sizeof(int) + free);
+        if (delSize >= size) {
+            chosenNode = free;
+            break;
+        }
+        prev = free;
+        bf.read(free, free);
+        //bf.read(nextFree, free);
+    }
+    //nextFree is either 0 or has the node after the one that is the correct size
+    //free is the node that is the correct size
+    //prev has the  node before free.
+    //delSize has the size of the free node.
+
+    if (delSize < size && nextFree == 0) { // if no such node exists, return file length.
+        return bf.fileLength();
+    }
+    bf.read(nextFree, chosenNode);    
+    if (delSize - size < 3*sizeof(int) + 2) { // if there is not enough space for the node and an extra key in that space
+        bf.write(nextFree, prev); // link previous to next.
+        return chosenNode;
+    } else{ // there is space for multiple nodes
+        
+        bf.write(nextFree, chosenNode + size); //write the next free offset shifted over in the current deleted node
+        //int pi;
+        //bf.read(pi, chosenNode + size);
+        //cout << pi << " has been written to " << chosenNode + size << endl;
+        bf.write(chosenNode + size, prev); // linke the previous deleted node to the shifted one.
+        bf.write(delSize - size, chosenNode + size + sizeof(int)); // write the next free removed node in the remaining free space.
+        return chosenNode;
+    }
+}
+
+
+int DiskMultiMap::remove(int node, int prev){
+    int nextPoint = sizeof(int);
+    int point;
+    do {
+        point = nextPoint;
+        bf.read(nextPoint, point);
+    }while (nextPoint != 0);
+    
+    //point now contains the last node of the linked list marking the deleted nodes.
+    int pro;
+    bf.read(pro, node); // collect the index of the node following the next node
+    
+    bf.write(node, point); // write the index of the node that should be deleted at the end of the deletion linked list.
+    int f = 0;
+    bf.write(f, node); // write 0 to the new node of the deletion linked list since there are no more deleted nodes.
+    int s1;
+    bf.read(s1, sizeof(int) + node); //get the size of the deleted linked list.
+    int s2;
+    bf.read(s2, 2*sizeof(int) + node + s1);
+    int size = s1 + s2 + 3*sizeof(int);
+    
+    bf.write(size, node + sizeof(int)); // write the size of the deleted node on the linked list.
+    
+    bf.write(pro, prev); // write the next node after the deleted one to the node before the deleted one.
+    return pro;
+}
 
 void DiskMultiMap::print(){
     int nb;
@@ -258,11 +357,17 @@ void DiskMultiMap::printList(int offset){
         bf.read(s1, nn + sizeof(int));
         char v[s1];
         bf.read(v, s1, nn + 2*sizeof(int));
+        cout << "Value Offset: " << nn + 2*sizeof(int) <<"\tSize: " << s1 << "\t" << v << endl;
         int s2;
         bf.read(s2, nn + 2* sizeof(int) + s1);
         char c[s1];
         bf.read(c, s2, nn + 3*sizeof(int) + s1);
-        cout << "\t" << count << ": Value is " << v << "\t Context is " << c <<endl;
+        cout << "Context Offset: " << nn + 3*sizeof(int) + s1 << "\tSize: " << s2 << "\t" << c <<"\t";/*<< endl << endl;*/
+        for (int i = 0; i < s2; i++) {
+            cout << (int)c[i] << " ";
+        }
+        cout << endl << endl;
+        //cout << "\t" << count << ": Value is " << v << "\t Context is " << c <<endl;
         bf.read(nn, nn);
         count++;
     } while (nn != 0);
@@ -323,13 +428,17 @@ MultiMapTuple DiskMultiMap::Iterator::operator*(){
     bf->read(s1, nodeOffset + sizeof(int));
     char v[s1];
     bf->read(v, s1, nodeOffset + 2*sizeof(int));
+    //cout << "C- String value : " << v << endl;
     int s2;
     bf->read(s2, nodeOffset + 2* sizeof(int) + s1);
-    char c[s1];
+    char c[s2];
     bf->read(c, s2, nodeOffset + 3*sizeof(int) + s1);
-
-    m.value = v;
-    m.context = c;
+    //cout << "C- String context : " << c << endl;
+    
+    m.value = (string)v;
+    m.context = (string)c;
+    
+    //cout << "Context from Multimap: " << m.context << endl << "Value from Multimap: " << m.value << endl <<endl;
     
     return m;
 }
@@ -345,10 +454,4 @@ DiskMultiMap::Iterator& DiskMultiMap::Iterator::operator++(){
 
 bool DiskMultiMap::Iterator::isValid() const{
     return valid;
-}
-
-void DiskMultiMap::Iterator::remove(int &nodeOff, int &next){
-    nodeOff = nodeOffset;
-    BinaryFile* bf = &(dmm->bf);
-    bf->read(next, nodeOffset);
 }

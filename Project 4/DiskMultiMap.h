@@ -24,7 +24,6 @@ public:
         int nodeOffset;
         string key;
         bool valid;
-        void remove(int& nodeOff, int& next);
 	};
 
 	DiskMultiMap();
@@ -46,6 +45,8 @@ private:
     int m_hash(const string& str);
     void printList(int offset);
     void printKeys(int offset);
+    int remove (int next, int node);
+    int getNewPos(int size);
 };
 
 #endif // DISKMULTIMAP_H_

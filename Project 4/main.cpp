@@ -20,8 +20,13 @@ int main(int argc, const char * argv[]) {
     DiskMultiMap d;
     d.createNew("f.txt" , 10);
     d.insert("Hello", "World", "Ethel");
-    d.insert("Hello", "King", "queen");
-    d.insert("bulks", "Snowball", "mammoth");
+    d.insert("Hello", "King", "queenkjsbdfsbggdfgdfgdsfgslknfkdjsnfkjbgkldfbslingsgfdfgdsgdhgh");
+    d.insert("Hello", "King", "queenkjsbdfsbggdfgdfgdsfgslknfkdjsnfkjbgkldfbslingsgfdfgdsgdhgh");
+    //d.print();
+    d.erase("Hello", "King", "queenkjsbdfsbggdfgdfgdsfgslknfkdjsnfkjbgkldfbslingsgfdfgdsgdhgh");
+    //d.print();
+    d.insert("bulks", "Snow", "mammoth");
+    d.insert("Hello", "King", "queenling");
     d.insert("sulks", "Many", "Flowers");
     d.print();
 }

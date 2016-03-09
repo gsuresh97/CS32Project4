@@ -24,6 +24,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		60A3D62A1C8FC71B0048508A /* IntelWeb.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IntelWeb.h; sourceTree = "<group>"; };
+		60A3D62B1C8FC71B0048508A /* InteractionTuple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InteractionTuple.h; sourceTree = "<group>"; };
 		60C6D0001C8BD5DF001FEC11 /* Project 4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Project 4"; sourceTree = BUILT_PRODUCTS_DIR; };
 		60C6D0031C8BD5DF001FEC11 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		60C6D00A1C8BE39B001FEC11 /* DiskMultiMap.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DiskMultiMap.h; sourceTree = "<group>"; };
@@ -66,6 +68,8 @@
 				60C6D00A1C8BE39B001FEC11 /* DiskMultiMap.h */,
 				60C6D00D1C8BE4EC001FEC11 /* DiskMultiMap.cpp */,
 				60C6D00B1C8BE39B001FEC11 /* MultiMapTuple.h */,
+				60A3D62A1C8FC71B0048508A /* IntelWeb.h */,
+				60A3D62B1C8FC71B0048508A /* InteractionTuple.h */,
 				60C6D00C1C8BE3D5001FEC11 /* BinaryFile.h */,
 			);
 			path = "Project 4";
@@ -247,6 +251,7 @@
 				60C6D0091C8BD5DF001FEC11 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
