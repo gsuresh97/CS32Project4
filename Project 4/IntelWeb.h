@@ -4,6 +4,7 @@
 #include "InteractionTuple.h"
 #include <string>
 #include <vector>
+#include "DiskMultiMap.h"
 
 class IntelWeb
 {
@@ -23,6 +24,11 @@ public:
 
 private:
 	// Your private member declarations will go here
+    //DiskMultiMap machine;
+    DiskMultiMap initiator;
+    DiskMultiMap target;
+    BinaryFile bf;
+    int maxItems;
 };
 
 #endif // INTELWEB_H_

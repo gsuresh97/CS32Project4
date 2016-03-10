@@ -229,7 +229,7 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
         bf.read(ky, size, posCurKey + 3*sizeof(int));
     }
     int prev = posCurKey + sizeof(int);
-    int node;
+    int node = -1;
     bf.read(node, posCurKey + sizeof(int)); // node has the offset of the first value context pair for that key.
     //bf.read(next, node);
     while (node != 0){
