@@ -28,7 +28,9 @@ private:
     DiskMultiMap initiator;
     DiskMultiMap target;
     BinaryFile bf;
+    MultiMapTuple crawlMMT;
     int maxItems;
+    bool isPairEqual(pair<string, int> element);
 };
 
 #endif // INTELWEB_H_

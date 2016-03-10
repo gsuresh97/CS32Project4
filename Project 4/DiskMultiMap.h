@@ -45,7 +45,7 @@ private:
     int m_hash(const string& str);
     void printList(int offset);
     void printKeys(int offset);
-    int remove (int next, int node);
+    int remove (char type, int node, int prev);
     int getNewPos(int size);
 };
 

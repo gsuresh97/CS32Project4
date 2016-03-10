@@ -219,17 +219,19 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
     bf.read(size, posCurKey + sizeof(int)*2); // read size of key at posCurKey
     char ky[size + 1];
     int nextKey;
+    int prevKey = plh;
     bf.read(nextKey, posCurKey); // read the offset value of the next key.
     bf.read(ky, size, posCurKey + 3*sizeof(int)); // read key at posCurKey
     
     //loop through all the keys to find the input key in case multiple keys have the same hash value.
     while (strcmp(ky, k) != 0 && nextKey != 0) { // while the keys dont match and there are more keys.
+        prevKey = posCurKey;
         posCurKey = nextKey;
         bf.read(nextKey, posCurKey);
         bf.read(ky, size, posCurKey + 3*sizeof(int));
     }
     int prev = posCurKey + sizeof(int);
-    int node = -1;
+    int node;
     bf.read(node, posCurKey + sizeof(int)); // node has the offset of the first value context pair for that key.
     //bf.read(next, node);
     while (node != 0){
@@ -242,9 +244,9 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
         char c1[s2];
         bf.read(c1, s2, node + 3*sizeof(int) + s1);
         bool rmv = false;
-        int x;
+        int x = 0;
         if (strcmp(v, v1) == 0 && strcmp(c, c1) == 0) {
-            x = remove(node, prev); // next is the node that you want to remove, node is the node before that.
+            x = remove('n', node, prev); // next is the node that you want to remove, node is the node before that.
             rmv = true;
         }
         if (rmv) {
@@ -252,6 +254,12 @@ int DiskMultiMap::erase(const std::string &key, const std::string &value, const 
         } else{
             prev = node;
             bf.read(node, prev);
+        }
+        int y;
+        bf.read(y, posCurKey  + sizeof(int));
+        
+        if (y == 0) {
+            remove('k', posCurKey, prevKey);
         }
     }
     
@@ -309,26 +317,30 @@ int DiskMultiMap::getNewPos(int size){
 }
 
 
-int DiskMultiMap::remove(int node, int prev){
+int DiskMultiMap::remove(char type, int node, int prev){
     int nextPoint = sizeof(int);
-    int point;
-    do {
-        point = nextPoint;
-        bf.read(nextPoint, point);
-    }while (nextPoint != 0);
+    //int point;
     
     //point now contains the last node of the linked list marking the deleted nodes.
     int pro;
     bf.read(pro, node); // collect the index of the node following the next node
     
-    bf.write(node, point); // write the index of the node that should be deleted at the end of the deletion linked list.
-    int f = 0;
-    bf.write(f, node); // write 0 to the new node of the deletion linked list since there are no more deleted nodes.
+    bf.write(node, sizeof(int)); // write the index of the node that should be deleted at the end of the deletion linked list.
+    //int f = 0;
+    bf.write(nextPoint, node); // write 0 to the new node of the deletion linked list since there are no more deleted nodes.
+    
+    int size;
     int s1;
-    bf.read(s1, sizeof(int) + node); //get the size of the deleted linked list.
     int s2;
-    bf.read(s2, 2*sizeof(int) + node + s1);
-    int size = s1 + s2 + 3*sizeof(int);
+    if (type == 'n') {
+        bf.read(s1, sizeof(int) + node); //get the size of the deleted linked list.
+        bf.read(s2, 2*sizeof(int) + node + s1);
+        size = s1 + s2 + 3*sizeof(int);
+    } else{
+        bf.read(s1, node + 2*sizeof(int));
+        size = 3*sizeof(int) + s1;
+    }
+
     
     bf.write(size, node + sizeof(int)); // write the size of the deleted node on the linked list.
     
