@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		60A3D62D1C8FC8920048508A /* IntelWeb.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60A3D62C1C8FC8920048508A /* IntelWeb.cpp */; };
 		60C6D00E1C8BE4EC001FEC11 /* DiskMultiMap.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60C6D00D1C8BE4EC001FEC11 /* DiskMultiMap.cpp */; };
-		60DF12241C91D3DA0067B85F /* p4tester.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60DF12231C91D3DA0067B85F /* p4tester.cpp */; };
+		60DF12261C9229B70067B85F /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 60DF12251C9229B70067B85F /* main.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -33,7 +33,7 @@
 		60C6D00B1C8BE39B001FEC11 /* MultiMapTuple.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MultiMapTuple.h; sourceTree = "<group>"; };
 		60C6D00C1C8BE3D5001FEC11 /* BinaryFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = BinaryFile.h; sourceTree = "<group>"; };
 		60C6D00D1C8BE4EC001FEC11 /* DiskMultiMap.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = DiskMultiMap.cpp; sourceTree = "<group>"; };
-		60DF12231C91D3DA0067B85F /* p4tester.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = p4tester.cpp; sourceTree = "<group>"; };
+		60DF12251C9229B70067B85F /* main.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -66,14 +66,14 @@
 		60C6D0021C8BD5DF001FEC11 /* Project 4 */ = {
 			isa = PBXGroup;
 			children = (
+				60DF12251C9229B70067B85F /* main.cpp */,
+				60C6D00C1C8BE3D5001FEC11 /* BinaryFile.h */,
+				60A3D62B1C8FC71B0048508A /* InteractionTuple.h */,
+				60C6D00B1C8BE39B001FEC11 /* MultiMapTuple.h */,
 				60C6D00A1C8BE39B001FEC11 /* DiskMultiMap.h */,
 				60C6D00D1C8BE4EC001FEC11 /* DiskMultiMap.cpp */,
-				60C6D00B1C8BE39B001FEC11 /* MultiMapTuple.h */,
-				60DF12231C91D3DA0067B85F /* p4tester.cpp */,
 				60A3D62A1C8FC71B0048508A /* IntelWeb.h */,
 				60A3D62C1C8FC8920048508A /* IntelWeb.cpp */,
-				60A3D62B1C8FC71B0048508A /* InteractionTuple.h */,
-				60C6D00C1C8BE3D5001FEC11 /* BinaryFile.h */,
 			);
 			path = "Project 4";
 			sourceTree = "<group>";
@@ -136,7 +136,7 @@
 			files = (
 				60A3D62D1C8FC8920048508A /* IntelWeb.cpp in Sources */,
 				60C6D00E1C8BE4EC001FEC11 /* DiskMultiMap.cpp in Sources */,
-				60DF12241C91D3DA0067B85F /* p4tester.cpp in Sources */,
+				60DF12261C9229B70067B85F /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -22,7 +22,7 @@ DiskMultiMap::DiskMultiMap(){
 
 DiskMultiMap::~DiskMultiMap(){
     close();
-    cout << "closed"<<endl;
+    //cout << "closed"<<endl;
 }
 
 bool DiskMultiMap::createNew(const std::string &filename, unsigned int numBuckets){
@@ -173,12 +173,14 @@ DiskMultiMap::Iterator DiskMultiMap::search(const std::string &key){
     int nextKey;
     bf.read(nextKey, posCurKey); // read the offset value of the next key.
     bf.read(ky, size, posCurKey + 3*sizeof(int)); // read key at posCurKey
-    
+    //cout << ky << endl;
     //loop through all the keys to find the input key in case multiple keys have the same hash value.
     while (strcmp(ky, k) != 0 && nextKey != 0) { // while the keys dont match and there are more keys.
         posCurKey = nextKey;
+        bf.read(size, posCurKey + sizeof(int)*2);
         bf.read(nextKey, posCurKey);
         bf.read(ky, size, posCurKey + 3*sizeof(int));
+        //cout << ky << endl;
     }
     if (strcmp(ky, k) != 0 && nextKey == 0) { //there is no key.
         Iterator it;

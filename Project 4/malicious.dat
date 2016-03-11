@@ -2,3 +2,10 @@ m918471 www.virus.com/downloads virusinstaller.exe
 m918471 virusinstaller.exe spyware.exe
 m918471 spyware.exe www.attackercontrolnetwork.com
 m1002973 unknown.exe www.attackercontrolnetwork.com
+m918471 www.virus.com/downloads http://google.com
+m918471 http://google.com spyware.exe
+m918471 http://google.com www.attackercontrolnetwork.com
+m1002973 unknown.exe http://google.com		
+m918471 www.virus.com/downloads http://google.com
+m918471 virusinstaller.exe http://google.com
+m918471 spyware.exe http://google.com

@@ -1,0 +1,26 @@
+CC = clang++
+
+all: DiskMultiMap.cpp IntelWeb.cpp p4tester.cpp p4gen
+	$(CC) DiskMultiMap.cpp IntelWeb.cpp p4tester.cpp -o p4tester
+	#echo "p4tester -b databasePrefix expectedNumberOfItems"
+	./p4tester -b trial 100
+	#echo "Run succesfully with values of trial and 100"
+	#echo "p4tester -i databasePrefix telemetryLogfile"
+	./p4tester -i trial malicious.txt
+	#echo "Run succesfully with values of trial and malicious.txt"
+	#echo "p4tester -s databasePrefix indicators minGoodPrevalence results"
+	./p4tester -s trial indicators.txt 12 stuffFound.txt
+	#echo "Run Successfully wiht indicator.txt, 12, and output is in stuffFound.txt"
+	#echo "p4tester -p databasePrefix purgeFile"
+	./p4tester -p trial omit.txt
+	#echo "run succesfully with trial and omit.txt"
+	#echo "p4tester -w results graphtemplate.html resultgraph.html"
+	./p4tester -w stuffFound.txt graphtemplate.html result.html
+	#echo "Run succesfully with graphtemplate and stuffFound"
+
+
+p4gen: p4gen.cpp
+	$(CC) clang++ p4gen.cpp -o p4gen
+	./p4gen sources.txt malicious.dat 10 3 malicious.txt
+
+
